@@ -40,9 +40,11 @@ app.get('/vegetables', (req, res) => {
 // EDIT (not applicable in an api)
 
 // SHOW --- READ --- GET
-// app.get('/vegetables/:i', (req,res) => {
-
-// })
+app.get('/vegetables/:i', (req,res) => {
+    res.render('./vegetables/Show', {
+        veggie: veggies[req.params.i]
+    })
+})
 
 // Tell the app to listen on a port
 app.listen(3001, () => {
