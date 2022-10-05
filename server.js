@@ -1,6 +1,7 @@
 // Require modules
 require('dotenv').config()
 const express = require('express')
+const mongoose = require('mongoose')
 const { veggies } = require('./models/vegetables') 
 
 // Create the Express App
@@ -12,6 +13,10 @@ const app = express()
 app.use(express.urlencoded({ extended: true}))
 app.engine('jsx' , require('jsx-view-engine').createEngine())
 app.set('view engine', 'jsx') 
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connection.once('open', () => {
+    console.log('connected to MongoDB Atlas')
+})
 
 // Mount middleware (app.use)
 
