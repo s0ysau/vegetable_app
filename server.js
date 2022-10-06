@@ -2,7 +2,8 @@
 require('dotenv').config()
 const express = require('express')
 const mongoose = require('mongoose')
-const { veggies } = require('./models/vegetables') 
+const methodOverride = require('method-override')
+const Veggies = require('./models/vegetables')
 
 // Create the Express App
 const app = express()
@@ -20,18 +21,28 @@ mongoose.connection.once('open', () => {
 
 // Mount middleware (app.use)
 
+app.use(methodOverride('_method'))
 
 // Mount routes
 
 // INDEX --- READ --- GET
 app.get('/vegetables', (req, res) => {
-    res.render('./vegetables/Index', { veggies })
+    Veggies.find({}, (err, foundVeggies) => {
+        if (err){
+            console.error(err)
+            res.status(400).send(err)
+        } else {
+            res.render('vegetables/Index', {
+                veggies: foundVeggies
+            })
+        }
+    })
 })
 
 // NEW (not applicable in an api)
-// app.get('/vegetables/new', (req,res) => {
-
-// })
+app.get('/vegetables/new', (req,res) => {
+    res.render('vegetables/New')
+})
 
 // DELETE
 
@@ -45,11 +56,11 @@ app.get('/vegetables', (req, res) => {
 // EDIT (not applicable in an api)
 
 // SHOW --- READ --- GET
-app.get('/vegetables/:i', (req,res) => {
-    res.render('./vegetables/Show', {
-        veggie: veggies[req.params.i]
-    })
-})
+// app.get('/vegetables/:i', (req,res) => {
+//     res.render('./vegetables/Show', {
+//         veggie: veggies[req.params.i]
+//     })
+// })
 
 // Tell the app to listen on a port
 app.listen(3001, () => {
