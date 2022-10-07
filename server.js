@@ -45,22 +45,71 @@ app.get('/vegetables/new', (req,res) => {
 })
 
 // DELETE
+app.delete('/vegetables/:id', (req, res) => {
+    Veggies.findByIdAndDelete((req.params.id), (err,deletedVeggie) => {
+        if (err) {
+            console.error(err)
+            res.status(400).send(err)
+        } else {
+            res.redirect('/vegetables')
+        }
+    })
+})
 
 // UPDATE
+app.put('/vegetables/:id', (req, res) => {
+    req.body.readyToEat === 'no' || req.body.readyToEat === true ? req.body.readyToEat = true : req.body.readyToEat = false
+    Veggies.findByIdAndUpdate(req.params.id, req.body, {new:true},(err, updateVeggie) => {
+        if (err) {
+            console.error()
+            res.status(400).send(err)
+        } else {
+            res.redirect(`/vegetables/${updateVeggie._id}`)
+        }
+    })
+})
 
 // CREATE 
-// app.create('/vegetables', (req,res) => {
-
-// })
+app.post('/vegetables', (req,res) => {
+    req.body.readyToEat === 'on' ? req.body.readyToEat = true : req.body.readyToEat = false
+    Veggies.create(req.body, (err,createVeggie) => {
+        if (err) {
+            console.error(err)
+            res.status(400).send(err)
+        } else {
+            res.redirect('/vegetables')
+            // res.send(createVeggie)
+        }
+    })
+})
 
 // EDIT (not applicable in an api)
+app.get('/vegetables/:id/edit', (req, res) => {
+    Veggies.findById(req.params.id, (err, foundVeggies) => {
+        if (err) {
+            console.error(err)
+            res.status(400).send(err)
+        } else {
+            res.render('vegetables/Edit', {
+                veggie: foundVeggies
+            })
+        }
+    })
+})
 
 // SHOW --- READ --- GET
-// app.get('/vegetables/:i', (req,res) => {
-//     res.render('./vegetables/Show', {
-//         veggie: veggies[req.params.i]
-//     })
-// })
+app.get('/vegetables/:id', (req,res) => {
+    Veggies.findById(req.params.id, (err, foundVeggies) => {
+        if (err) {
+            console.error(err)
+            res.send(400).send(err)
+        } else {
+            res.render('vegetables/Show', {
+                veggie: foundVeggies
+            })
+        }
+    })
+})
 
 // Tell the app to listen on a port
 app.listen(3001, () => {
